@@ -1,0 +1,392 @@
+<html><head><base href="https://websim.ai/c/quiz-mariage-fatoumata-adrien"><title>Quiz de Mariage - Fatoumata & Adrien</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Parisienne&display=swap');
+      
+      body {
+        font-family: 'Segoe UI', sans-serif;
+        font-weight: 300;
+        line-height: 1.6;
+        color: #333;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff5e6;
+      }
+      h1 {
+        font-family: 'Parisienne', cursive;
+        color: #cd7f32;
+        text-align: center;
+        font-size: 3.5em;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+      }
+      h2 {
+        color: #cd7f32;
+        text-align: center;
+      }
+      .container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+      }
+      label {
+        display: block;
+        margin-top: 10px;
+        font-weight: bold;
+        color: #4a4a4a;
+      }
+      input[type="text"], textarea, select {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid #cd7f32;
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-size: 16px;
+        font-family: 'Segoe UI', sans-serif;
+        font-weight: 300;
+      }
+      .answer-button {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: opacity 0.3s ease;
+        font-family: 'Segoe UI', sans-serif;
+        font-weight: 300;
+      }
+      .answer-button:hover {
+        opacity: 0.8;
+      }
+      .answer-button.selected {
+        border: 3px solid #fff;
+        box-shadow: 0 0 0 3px #000;
+      }
+      button {
+        background-color: #cd7f32;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        margin-top: 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+        font-family: 'Segoe UI', sans-serif;
+        font-weight: 300;
+      }
+      button:hover {
+        background-color: #b36b2b;
+      }
+      #quizContainer, #resultsContainer, #adminContainer {
+        display: none;
+      }
+      #exportContainer {
+        margin-top: 20px;
+        text-align: center;
+      }
+      .progress-bar {
+        width: 100%;
+        background-color: #e0e0e0;
+        padding: 3px;
+        border-radius: 3px;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, .2);
+        margin-top: 20px;
+      }
+      .progress {
+        display: block;
+        height: 22px;
+        background-color: #cd7f32;
+        border-radius: 3px;
+        transition: width 500ms ease-in-out;
+      }
+      .error {
+        color: #e74c3c;
+        font-weight: bold;
+        margin-top: 10px;
+      }
+      #questionList {
+        margin-top: 20px;
+      }
+      .question-item {
+        background-color: #fff5e6;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 4px;
+      }
+      .delete-question {
+        background-color: #e74c3c;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        float: right;
+      }
+    </style>
+    </head>
+    <body>
+      <h1>Fatoumata & Adrien</h1>
+      
+      <div id="userInfoContainer" class="container">
+        <h2>Bienvenue au Quiz de Mariage !</h2>
+        <form id="userInfoForm">
+          <label for="username">Votre Nom :</label>
+          <input type="text" id="username" required>
+          
+          <label for="tableName">Nom/Numéro de Table :</label>
+          <input type="text" id="tableName" required>
+          
+          <button type="submit">Commencer le Quiz</button>
+        </form>
+      </div>
+    
+      <div id="quizContainer" class="container">
+        <h2>C'est l'heure du Quiz !</h2>
+        <div id="questionContainer"></div>
+        <div class="progress-bar">
+          <span class="progress" id="progressBar"></span>
+        </div>
+        <button id="nextQuestion" style="display:none;">Question Suivante</button>
+      </div>
+    
+      <div id="resultsContainer" class="container">
+        <h2>Quiz Terminé !</h2>
+        <p>Fatoumata et Adrien vous remercient d'avoir participé à cet hilarant quizz</p>
+      </div>
+    
+      <div id="adminContainer" class="container">
+        <h2>Panneau d'Administration</h2>
+        <form id="questionForm">
+          <label for="question">Question :</label>
+          <input type="text" id="question" required>
+          
+          <label for="answerCount">Nombre de Réponses :</label>
+          <select id="answerCount">
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+          </select>
+          
+          <div id="answerInputs"></div>
+          
+          <label for="correctAnswers">Réponses Correctes (laissez vide si pas de réponse correcte) :</label>
+          <input type="text" id="correctAnswers" placeholder="Ex: 1,3,4">
+          
+          <button type="submit">Ajouter la Question</button>
+        </form>
+        <div id="questionList"></div>
+        <button id="finishQuiz">Terminer la Création du Quiz</button>
+        <button id="exportCSV">Résultats</button>
+      </div>
+    
+      <script>
+        // Clear all previously stored data
+        localStorage.removeItem('quizQuestions');
+        localStorage.removeItem('quizResults');
+    
+        let quizQuestions = [];
+        let currentQuestion = 0;
+        let userAnswers = [];
+        let quizResults = [];
+        let quizCreated = false;
+        let shuffledQuestions = [];
+    
+        const userInfoForm = document.getElementById('userInfoForm');
+        const userInfoContainer = document.getElementById('userInfoContainer');
+        const quizContainer = document.getElementById('quizContainer');
+        const questionContainer = document.getElementById('questionContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const adminContainer = document.getElementById('adminContainer');
+        const progressBar = document.getElementById('progressBar');
+        const nextQuestionBtn = document.getElementById('nextQuestion');
+    
+        const buttonColors = ['#cd7f32', '#b8860b', '#d2691e', '#8b4513', '#a0522d', '#daa520', '#cd853f', '#d2691e'];
+    
+        function shuffleArray(array) {
+          for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+          }
+        }
+    
+        userInfoForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const username = document.getElementById('username').value;
+          const tableName = document.getElementById('tableName').value;
+          if (username && tableName) {
+            if (username === 'admin' && tableName === 'admin') {
+              userInfoContainer.style.display = 'none';
+              adminContainer.style.display = 'block';
+              displayQuestions();
+            } else if (quizCreated) {
+              userInfoContainer.style.display = 'none';
+              quizContainer.style.display = 'block';
+              shuffledQuestions = [...quizQuestions];
+              shuffleArray(shuffledQuestions);
+              loadQuestion();
+            } else {
+              alert('Le quiz n\'a pas encore été créé. Veuillez attendre que l\'administrateur le configure.');
+            }
+          }
+        });
+    
+        function loadQuestion() {
+          if (currentQuestion < shuffledQuestions.length) {
+            const question = shuffledQuestions[currentQuestion];
+            const shuffledAnswers = [...question.answers];
+            shuffleArray(shuffledAnswers);
+            questionContainer.innerHTML = `
+              <h3>${question.question}</h3>
+              ${shuffledAnswers.map((answer, index) => `
+                <button class="answer-button" style="background-color: ${buttonColors[index]}" data-index="${question.answers.indexOf(answer)}">${answer}</button>
+              `).join('')}
+            `;
+            updateProgressBar();
+            attachAnswerListeners();
+            nextQuestionBtn.style.display = 'block';
+          } else {
+            finishQuiz();
+          }
+        }
+    
+        function attachAnswerListeners() {
+          const answerButtons = document.querySelectorAll('.answer-button');
+          answerButtons.forEach(button => {
+            button.addEventListener('click', () => {
+              button.classList.toggle('selected');
+            });
+          });
+        }
+    
+        nextQuestionBtn.addEventListener('click', () => {
+          const selectedAnswers = Array.from(document.querySelectorAll('.answer-button.selected'))
+            .map(button => parseInt(button.getAttribute('data-index')));
+          userAnswers.push(selectedAnswers);
+          currentQuestion++;
+          loadQuestion();
+        });
+    
+        function updateProgressBar() {
+          const progress = ((currentQuestion + 1) / shuffledQuestions.length) * 100;
+          progressBar.style.width = `${progress}%`;
+        }
+    
+        function finishQuiz() {
+          const username = document.getElementById('username').value;
+          const tableName = document.getElementById('tableName').value;
+          quizResults.push({
+            username,
+            tableName,
+            answers: userAnswers
+          });
+          localStorage.setItem('quizResults', JSON.stringify(quizResults));
+          quizContainer.style.display = 'none';
+          resultsContainer.style.display = 'block';
+        }
+    
+        // Admin panel functionality
+        const questionForm = document.getElementById('questionForm');
+        const answerCountSelect = document.getElementById('answerCount');
+        const answerInputs = document.getElementById('answerInputs');
+    
+        answerCountSelect.addEventListener('change', updateAnswerInputs);
+    
+        function updateAnswerInputs() {
+          const count = parseInt(answerCountSelect.value);
+          answerInputs.innerHTML = '';
+          for (let i = 1; i <= count; i++) {
+            answerInputs.innerHTML += `
+              <label for="answer${i}">Réponse ${i} :</label>
+              <input type="text" id="answer${i}" required>
+            `;
+          }
+        }
+    
+        questionForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const question = document.getElementById('question').value;
+          const answerCount = parseInt(answerCountSelect.value);
+          const answers = [];
+          for (let i = 1; i <= answerCount; i++) {
+            answers.push(document.getElementById(`answer${i}`).value);
+          }
+          const correctAnswersInput = document.getElementById('correctAnswers').value;
+          const correctAnswers = correctAnswersInput ? correctAnswersInput.split(',').map(num => parseInt(num) - 1) : [];
+    
+          quizQuestions.push({
+            question,
+            answers,
+            correctAnswers
+          });
+    
+          localStorage.setItem('quizQuestions', JSON.stringify(quizQuestions));
+          questionForm.reset();
+          updateAnswerInputs();
+          displayQuestions();
+          alert('Question ajoutée avec succès !');
+        });
+    
+        function displayQuestions() {
+          const questionList = document.getElementById('questionList');
+          questionList.innerHTML = '<h3>Questions Actuelles :</h3>';
+          quizQuestions.forEach((q, index) => {
+            questionList.innerHTML += `
+              <div class="question-item">
+                <button class="delete-question" data-index="${index}">Supprimer</button>
+                <p><strong>Question ${index + 1} :</strong> ${q.question}</p>
+                <p><strong>Réponses :</strong> ${q.answers.join(', ')}</p>
+                <p><strong>Réponses Correctes :</strong> ${q.correctAnswers.length ? q.correctAnswers.map(i => q.answers[i]).join(', ') : 'Aucune réponse correcte définie'}</p>
+              </div>
+            `;
+          });
+        }
+    
+        document.getElementById('questionList').addEventListener('click', (e) => {
+          if (e.target.classList.contains('delete-question')) {
+            const index = parseInt(e.target.getAttribute('data-index'));
+            quizQuestions.splice(index, 1);
+            localStorage.setItem('quizQuestions', JSON.stringify(quizQuestions));
+            displayQuestions();
+          }
+        });
+    
+        document.getElementById('finishQuiz').addEventListener('click', () => {
+          if (quizQuestions.length > 0) {
+            quizCreated = true;
+            adminContainer.style.display = 'none';
+            userInfoContainer.style.display = 'block';
+            alert('Quiz créé avec succès ! Les invités peuvent maintenant participer au quiz.');
+          } else {
+            alert('Veuillez ajouter au moins une question avant de terminer le quiz.');
+          }
+        });
+    
+        document.getElementById('exportCSV').addEventListener('click', () => {
+          let csvContent = "data:text/csv;charset=utf-8,";
+          csvContent += "Nom,Table,Réponses\n";
+          quizResults.forEach(result => {
+            csvContent += `${result.username},${result.tableName},"${result.answers.map(ans => ans.join('|')).join(';')}"\n`;
+          });
+          const encodedUri = encodeURI(csvContent);
+          const link = document.createElement("a");
+          link.setAttribute("href", encodedUri);
+          link.setAttribute("download", "resultats_quiz_mariage_fatoumata_adrien.csv");
+          document.body.appendChild(link);
+          link.click();
+        });
+    
+        // Initialize answer inputs
+        updateAnswerInputs();
+      </script>
+    </body>
+    </html>
